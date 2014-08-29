@@ -5,12 +5,10 @@
 package ListenerInputHandler;
 
 import java.awt.Component;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -18,41 +16,40 @@ import java.util.List;
  * @author brian
  */
 public class InputHandler implements InputHandlerClient {
-    
+
     //private final List<Component> sourceList;
     private final List<InputHandlerClient> clients;
     private final InputEventQueue receivedInput;
     private final InputEventQueue receivedInputCopy;
-    
-    
-    public InputHandler(){
-        clients = new ArrayList<InputHandlerClient>();
+
+    public InputHandler() {
+        clients = new ArrayList<>();
         receivedInput = new InputEventQueue();
         receivedInputCopy = new InputEventQueue();
     }
-    
+
     //<editor-fold defaultstate="collapsed" desc="add and remove sources">
-    public void addInputSource(Component sourceComponent){
+    public void addInputSource(Component sourceComponent) {
         //sourceList.add(sourceComponent);
         sourceComponent.addKeyListener(this);
         sourceComponent.addMouseListener(this);
         sourceComponent.addMouseMotionListener(this);
         sourceComponent.addMouseWheelListener(this);
     }
-    
-    public void addInputSourceList(List<Component> sourceComponentList){
-        for (Component sourceComponent : sourceComponentList){
+
+    public void addInputSourceList(List<Component> sourceComponentList) {
+        for (Component sourceComponent : sourceComponentList) {
             addInputSource(sourceComponent);
         }
     }
-    
+
     public void removeInputSource(Component sourceComponent) {
         sourceComponent.removeKeyListener(this);
         sourceComponent.removeMouseListener(this);
         sourceComponent.removeMouseMotionListener(this);
         sourceComponent.removeMouseWheelListener(this);
     }
-    
+
     public void removeInputSourceList(List<Component> sourceComponentList) {
         for (Component sourceComponent : sourceComponentList) {
             removeInputSource(sourceComponent);
@@ -64,15 +61,15 @@ public class InputHandler implements InputHandlerClient {
     public void addClient(InputHandlerClient newClient) {
         clients.add(newClient);
     }
-    
+
     public void addClientList(List<InputHandlerClient> newClientList) {
         clients.addAll(newClientList);
     }
-    
+
     public void removeClient(InputHandlerClient client) {
         clients.remove(client);
     }
-    
+
     public void removeClientList(List<InputHandlerClient> clientList) {
         for (InputHandlerClient client : clientList) {
             clients.remove(client);
@@ -85,16 +82,16 @@ public class InputHandler implements InputHandlerClient {
         flushInputToCopy();
         handleCopiedInput();
     }
-    
-    private synchronized void flushInputToCopy(){
+
+    private synchronized void flushInputToCopy() {
         receivedInputCopy.of(receivedInput);
         receivedInput.clear();
     }
-    
-    private void handleCopiedInput(){
-        while(!receivedInputCopy.isEmpty()){
+
+    private void handleCopiedInput() {
+        while (!receivedInputCopy.isEmpty()) {
             switch (receivedInputCopy.removeEventType()) {
-                case KEY_EVENT :
+                case KEY_EVENT:
                     handleKeyEvent(receivedInputCopy.removeKeyEvent());
                     break;
                 case MOUSE_EVENT:
@@ -108,9 +105,9 @@ public class InputHandler implements InputHandlerClient {
             }
         }
     }
-    
+
     //<editor-fold defaultstate="collapsed" desc="Handle Key Events">
-    private void handleKeyEvent(KeyEvent keyEvent){
+    private void handleKeyEvent(KeyEvent keyEvent) {
         switch (keyEvent.getID()) {
             case KeyEvent.KEY_TYPED:
                 handleKeyTypedEvent(keyEvent);
@@ -125,28 +122,28 @@ public class InputHandler implements InputHandlerClient {
                 throw new AssertionError();
         }
     }
-    
-    private void handleKeyTypedEvent(KeyEvent keyEvent){
+
+    private void handleKeyTypedEvent(KeyEvent keyEvent) {
         for (InputHandlerClient client : clients) {
             client.keyTyped(keyEvent);
         }
     }
-    
-    private void handleKeyPressedEvent(KeyEvent keyEvent){
+
+    private void handleKeyPressedEvent(KeyEvent keyEvent) {
         for (InputHandlerClient client : clients) {
             client.keyPressed(keyEvent);
         }
     }
-    
-    private void handleKeyReleasedEvent(KeyEvent keyEvent){
+
+    private void handleKeyReleasedEvent(KeyEvent keyEvent) {
         for (InputHandlerClient client : clients) {
             client.keyReleased(keyEvent);
         }
     }
     //</editor-fold>
-    
+
     //<editor-fold defaultstate="collapsed" desc="Handle Mouse Events">
-    private void handleMouseEvent(MouseEvent mouseEvent){
+    private void handleMouseEvent(MouseEvent mouseEvent) {
         switch (mouseEvent.getID()) {
             case MouseEvent.MOUSE_CLICKED:
                 handleMouseClickedEvent(mouseEvent);
@@ -173,59 +170,59 @@ public class InputHandler implements InputHandlerClient {
                 throw new AssertionError();
         }
     }
-    
-    private void handleMouseClickedEvent(MouseEvent mouseEvent){
+
+    private void handleMouseClickedEvent(MouseEvent mouseEvent) {
         for (InputHandlerClient client : clients) {
             client.mouseClicked(mouseEvent);
         }
     }
-    
-    private void handleMousePressedEvent(MouseEvent mouseEvent){
+
+    private void handleMousePressedEvent(MouseEvent mouseEvent) {
         for (InputHandlerClient client : clients) {
             client.mousePressed(mouseEvent);
         }
     }
-    
-    private void handleMouseReleasedEvent(MouseEvent mouseEvent){
+
+    private void handleMouseReleasedEvent(MouseEvent mouseEvent) {
         for (InputHandlerClient client : clients) {
             client.mouseReleased(mouseEvent);
         }
     }
-    
-    private void handleMouseEnteredEvent(MouseEvent mouseEvent){
+
+    private void handleMouseEnteredEvent(MouseEvent mouseEvent) {
         for (InputHandlerClient client : clients) {
             client.mouseEntered(mouseEvent);
         }
     }
-    
-    private void handleMouseExitedEvent(MouseEvent mouseEvent){
+
+    private void handleMouseExitedEvent(MouseEvent mouseEvent) {
         for (InputHandlerClient client : clients) {
             client.mouseExited(mouseEvent);
         }
     }
-    
-    private void handleMouseDraggedEvent(MouseEvent mouseEvent){
+
+    private void handleMouseDraggedEvent(MouseEvent mouseEvent) {
         for (InputHandlerClient client : clients) {
             client.mouseDragged(mouseEvent);
         }
     }
-    
-    private void handleMouseMovedEvent(MouseEvent mouseEvent){
+
+    private void handleMouseMovedEvent(MouseEvent mouseEvent) {
         for (InputHandlerClient client : clients) {
             client.mouseMoved(mouseEvent);
         }
     }
     //</editor-fold>
-    
+
     //<editor-fold defaultstate="collapsed" desc="Handle Mouse Wheel Event">
-    private void handleMouseWheelEvent(MouseWheelEvent mouseWheelEvent){
+    private void handleMouseWheelEvent(MouseWheelEvent mouseWheelEvent) {
         for (InputHandlerClient client : clients) {
             client.mouseWheelMoved(mouseWheelEvent);
         }
     }
     //</editor-fold>
     //</editor-fold>
-    
+
     //< editor-fold defaultstate="collapsed" desc="Input Handler Client Methods">
     @Override
     public void keyTyped(KeyEvent event) {
@@ -281,6 +278,6 @@ public class InputHandler implements InputHandlerClient {
     public synchronized void mouseWheelMoved(MouseWheelEvent event) {
         receivedInput.addMouseWheelEvent(event);
     }
-     //</editor-fold>
+    //</editor-fold>
 
 }
